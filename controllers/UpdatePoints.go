@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	player "github.com/gabrielluizsf/api.skyhawk/Player"
 	"github.com/gabrielluizsf/api.skyhawk/database"
@@ -39,10 +40,9 @@ func UpdatePoints(w http.ResponseWriter, r *http.Request) {
 			log.Println("Error decoding player data:", err)
 			return
 		}
-
 		// Update points in database
 		playerDoc := bson.M{"username": playerData.Username}
-		update := bson.M{"$set": bson.M{"points": playerData.Points}}
+		update := bson.M{"$set": bson.M{"points": playerData.Points + playerData.Points}}
 
 		conect, client := database.Connect()
 
@@ -81,6 +81,6 @@ func UpdateWSSendRequest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	pointsToSTRING := string(player.Points)
-	Log("Enviando atualização dos pontos do player "+player.Username+" para "+pointsToSTRING, r)
+	pointsToSTRING := strconv.Itoa(player.Points)
+	Log("Adicionando mais "+pointsToSTRING+" pontos para o player "+player.Username, r)
 }
