@@ -32,3 +32,35 @@ func AddPlayer(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("Jogador adicionado com sucesso!"))
 }
+func GetAllPlayers(w http.ResponseWriter, r *http.Request) {
+	conect, client := database.Connect()
+
+	filter := bson.M{}
+
+	cur, err := conect.Find(context.Background(), filter)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer cur.Close(context.Background())
+
+	var players []player.Configure
+
+	for cur.Next(context.Background()) {
+		var p player.Configure
+		err := cur.Decode(&p)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		players = append(players, p)
+	}
+
+	err = client.Disconnect(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(players)
+}
