@@ -81,4 +81,6 @@ func UpdateWSSendRequest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	pointsToSTRING := string(player.Points)
+	Log("Enviando atualização dos pontos do player "+player.Username+" para "+pointsToSTRING, r)
 }

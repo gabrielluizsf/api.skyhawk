@@ -41,7 +41,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	Log("Login feito.\nUsername:"+player.Username, r)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseData)

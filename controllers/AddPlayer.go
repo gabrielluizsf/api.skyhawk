@@ -25,7 +25,7 @@ func AddPlayer(w http.ResponseWriter, r *http.Request) {
 
 	err = client.Disconnect(context.Background())
 	logERROR(err)
-
+	Log(player.Username+" criado com sucesso", r)
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("Jogador adicionado com sucesso!"))
 }

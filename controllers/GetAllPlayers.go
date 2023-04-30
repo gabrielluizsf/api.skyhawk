@@ -39,7 +39,7 @@ func GetAllPlayers(w http.ResponseWriter, r *http.Request) {
 
 	err = client.Disconnect(context.Background())
 	logERROR(err)
-
+	Log("Acesso ao banco de dados de players", r)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(players)
 }
