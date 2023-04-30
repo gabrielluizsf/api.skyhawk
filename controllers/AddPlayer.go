@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 
 	player "github.com/gabrielluizsf/api.skyhawk/Player"
@@ -29,10 +28,4 @@ func AddPlayer(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("Jogador adicionado com sucesso!"))
-}
-
-func logERROR(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
 }
