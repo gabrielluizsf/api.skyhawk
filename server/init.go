@@ -8,5 +8,6 @@ import (
 
 func Start() {
 	http.HandleFunc("/addplayer", controllers.AddPlayer)
+	http.HandleFunc("/allplayers", controllers.GetAllPlayers)
 	http.ListenAndServe(":7900", nil)
 }
