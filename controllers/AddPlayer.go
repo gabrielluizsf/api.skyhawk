@@ -22,13 +22,17 @@ func AddPlayer(w http.ResponseWriter, r *http.Request) {
 
 	conect, client := database.Connect()
 	_, err = conect.InsertOne(context.Background(), playerDoc)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logERROR(err)
+
 	err = client.Disconnect(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
+	logERROR(err)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("Jogador adicionado com sucesso!"))
+}
+
+func logERROR(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
