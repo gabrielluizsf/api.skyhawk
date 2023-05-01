@@ -5,15 +5,16 @@ import (
 	"net/http"
 
 	"github.com/gabrielluizsf/api.skyhawk/controllers"
+	"github.com/gabrielluizsf/api.skyhawk/handlers"
 )
 
 func Start() {
-	http.HandleFunc("/addplayer", controllers.AddPlayer)
-	http.HandleFunc("/allplayers", controllers.GetAllPlayers)
-	http.HandleFunc("/login", controllers.Login)
-	http.HandleFunc("/updatepoints", controllers.UpdateWSSendRequest)
+	http.Handle("/addplayer", handlers.EnableCors(http.HandlerFunc(controllers.AddPlayer)))
+	http.Handle("/allplayers", handlers.EnableCors(http.HandlerFunc(controllers.GetAllPlayers)))
+	http.Handle("/login", handlers.EnableCors(http.HandlerFunc(controllers.Login)))
+	http.Handle("/updatepoints", handlers.EnableCors(http.HandlerFunc(controllers.UpdateWSSendRequest)))
 	//web sockets
-	http.HandleFunc("/ws/updatepoints", controllers.UpdatePoints)
+	http.Handle("/ws/updatepoints", handlers.EnableCors(http.HandlerFunc(controllers.UpdatePoints)))
 	log.Printf("server started")
 	http.ListenAndServe(":7900", nil)
 }
