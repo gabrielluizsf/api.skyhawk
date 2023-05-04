@@ -23,18 +23,19 @@ func GetAllPlayers(w http.ResponseWriter, r *http.Request) {
 	}
 	defer cur.Close(context.Background())
 
-	var players []player.Configure
+	var players []player.Public
 
 	for cur.Next(context.Background()) {
-		var p player.Configure
-		err := cur.Decode(&p)
+		var player player.Public
+		err := cur.Decode(&player)
 		logERROR(err)
 
-		hashedUsername, err := bcrypt.GenerateFromPassword([]byte(p.Username), 10)
+		hashedUsername, err := bcrypt.GenerateFromPassword([]byte(player.Username), 10)
 		logERROR(err)
 
-		p.Username = string(hashedUsername)
-		players = append(players, p)
+		player.Username = string(hashedUsername)
+
+		players = append(players, player)
 	}
 
 	err = client.Disconnect(context.Background())
