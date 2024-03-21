@@ -28,12 +28,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Usuário não encontrado", http.StatusUnauthorized)
 		return
 	}
-  if err := result.Decode(&playerDB);err != nil {
+	if err := result.Decode(&playerDB); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(playerDB.Password), []byte(player.Password));err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(playerDB.Password), []byte(player.Password)); err != nil {
 		http.Error(w, "Senha incorreta", http.StatusUnauthorized)
 		return
 	}

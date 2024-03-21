@@ -42,7 +42,7 @@ func AddPlayer(w http.ResponseWriter, r *http.Request) {
 
 	// Verifica se já existe algum jogador com o mesmo username
 	existingPlayerDoc := bson.M{"username": player.Username}
-  if err = playerCollection.FindOne(r.Context(), existingPlayerDoc).Decode(&existingPlayer); err == nil {
+	if err = playerCollection.FindOne(r.Context(), existingPlayerDoc).Decode(&existingPlayer); err == nil {
 		Log("Um usuário tentou se cadastrar com um username já existente", r)
 		http.Error(w, "REQUEST ERROR", http.StatusBadRequest)
 		return

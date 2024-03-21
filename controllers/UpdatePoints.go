@@ -34,7 +34,7 @@ func UpdatePoints(w http.ResponseWriter, r *http.Request) {
 
 		// Decode player data
 		var playerData player.Configure
-    if err := json.Unmarshal(message, &playerData);err != nil {
+		if err := json.Unmarshal(message, &playerData); err != nil {
 			log.Println("Error decoding player data:", err)
 			return
 		}
@@ -57,9 +57,9 @@ func UpdatePoints(w http.ResponseWriter, r *http.Request) {
 }
 func UpdateWSSendRequest(w http.ResponseWriter, r *http.Request) {
 	var player player.Configure
-	if err := json.NewDecoder(r.Body).Decode(&player); err != nil{
-    log.Fatal(err)
-  }
+	if err := json.NewDecoder(r.Body).Decode(&player); err != nil {
+		log.Fatal(err)
+	}
 
 	conn, _, err := websocket.DefaultDialer.Dial("ws://localhost:7900/ws/updatepoints", nil)
 	if err != nil {
@@ -77,7 +77,7 @@ func UpdateWSSendRequest(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-  if err := conn.WriteMessage(websocket.TextMessage, jsonData);err != nil {
+	if err := conn.WriteMessage(websocket.TextMessage, jsonData); err != nil {
 		log.Fatal(err)
 	}
 	pointsToSTRING := strconv.Itoa(player.Points)
