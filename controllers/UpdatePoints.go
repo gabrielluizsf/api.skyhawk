@@ -44,7 +44,7 @@ func UpdatePoints(w http.ResponseWriter, r *http.Request) {
 		playerDoc := bson.M{"username": playerData.Username}
 		update := bson.M{"$set": bson.M{"points": playerData.Points + playerData.Points}}
 
-		conect, client := database.Connect()
+		conect, client := database.Connect(r.Context())
 
 		_, err = conect.UpdateOne(context.Background(), playerDoc, update)
 		if err != nil {

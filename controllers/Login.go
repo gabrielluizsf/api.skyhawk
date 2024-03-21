@@ -22,7 +22,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	playerDoc := bson.M{"username": player.Username}
 
-	conect, client := database.Connect()
+	conect, client := database.Connect(r.Context())
 
 	result := conect.FindOne(context.Background(), playerDoc)
 	if result.Err() != nil {

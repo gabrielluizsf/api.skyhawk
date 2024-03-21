@@ -10,22 +10,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Connect() (*mongo.Collection, *mongo.Client) {
+func Connect(ctx context.Context) (*mongo.Collection, *mongo.Client) {
 
 	if os.Getenv("APP_ENV") != "production" {
 		err := godotenv.Load()
 		if err != nil {
-			log.Fatal("Erro ao carregar variáveis de ambiente: ", err)
+			log.Fatalf("Erro ao carregar variáveis de ambiente: %v", err)
 		}
 	}
 	uri := os.Getenv("DB_URI")
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = client.Connect(context.Background())
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
 		log.Fatal(err)
 	}

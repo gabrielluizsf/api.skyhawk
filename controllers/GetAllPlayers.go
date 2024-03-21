@@ -12,7 +12,7 @@ import (
 )
 
 func GetAllPlayers(w http.ResponseWriter, r *http.Request) {
-	conect, client := database.Connect()
+	conect, client := database.Connect(r.Context())
 
 	filter := bson.M{}
 

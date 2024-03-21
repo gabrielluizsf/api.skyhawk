@@ -38,7 +38,7 @@ func AddPlayer(w http.ResponseWriter, r *http.Request) {
 		"password": string(passwordEncrypted),
 	}
 
-	conect, client := database.Connect()
+	conect, client := database.Connect(r.Context())
 	defer client.Disconnect(context.Background())
 
 	// Verifica se já existe algum jogador com o mesmo username
