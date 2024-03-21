@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
@@ -15,32 +14,30 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var playerDB player.Configure
 	var playerResponse player.Public
 	var player player.Configure
-	err := json.NewDecoder(r.Body).Decode(&player)
-	if err != nil {
+
+	if err := json.NewDecoder(r.Body).Decode(&player); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	playerDoc := bson.M{"username": player.Username}
 
-	conect, client := database.Connect(r.Context())
+	playerCollection, client := database.Connect(r.Context())
 
-	result := conect.FindOne(context.Background(), playerDoc)
+	result := playerCollection.FindOne(r.Context(), playerDoc)
 	if result.Err() != nil {
 		http.Error(w, "Usuário não encontrado", http.StatusUnauthorized)
 		return
 	}
-	err = result.Decode(&playerDB)
-	if err != nil {
+  if err := result.Decode(&playerDB);err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(playerDB.Password), []byte(player.Password))
-	if err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(playerDB.Password), []byte(player.Password));err != nil {
 		http.Error(w, "Senha incorreta", http.StatusUnauthorized)
 		return
 	}
-	client.Disconnect(context.Background())
+	client.Disconnect(r.Context())
 
 	playerResponse.Username = playerDB.Username
 	playerResponse.Points = playerDB.Points

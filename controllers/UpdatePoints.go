@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -35,8 +34,7 @@ func UpdatePoints(w http.ResponseWriter, r *http.Request) {
 
 		// Decode player data
 		var playerData player.Configure
-		err = json.Unmarshal(message, &playerData)
-		if err != nil {
+    if err := json.Unmarshal(message, &playerData);err != nil {
 			log.Println("Error decoding player data:", err)
 			return
 		}
@@ -44,22 +42,24 @@ func UpdatePoints(w http.ResponseWriter, r *http.Request) {
 		playerDoc := bson.M{"username": playerData.Username}
 		update := bson.M{"$set": bson.M{"points": playerData.Points + playerData.Points}}
 
-		conect, client := database.Connect(r.Context())
+		playerCollection, client := database.Connect(r.Context())
 
-		_, err = conect.UpdateOne(context.Background(), playerDoc, update)
+		_, err = playerCollection.UpdateOne(r.Context(), playerDoc, update)
 		if err != nil {
 			log.Println("Error updating points in database:", err)
 			return
 		}
 
-		client.Disconnect(context.Background())
+		client.Disconnect(r.Context())
 
 		log.Printf("Points updated for player %s: %d", playerData.Username, playerData.Points)
 	}
 }
 func UpdateWSSendRequest(w http.ResponseWriter, r *http.Request) {
 	var player player.Configure
-	err := json.NewDecoder(r.Body).Decode(&player)
+	if err := json.NewDecoder(r.Body).Decode(&player); err != nil{
+    log.Fatal(err)
+  }
 
 	conn, _, err := websocket.DefaultDialer.Dial("ws://localhost:7900/ws/updatepoints", nil)
 	if err != nil {
@@ -77,8 +77,7 @@ func UpdateWSSendRequest(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	err = conn.WriteMessage(websocket.TextMessage, jsonData)
-	if err != nil {
+  if err := conn.WriteMessage(websocket.TextMessage, jsonData);err != nil {
 		log.Fatal(err)
 	}
 	pointsToSTRING := strconv.Itoa(player.Points)

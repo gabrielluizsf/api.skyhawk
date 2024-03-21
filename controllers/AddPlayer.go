@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
@@ -38,19 +37,18 @@ func AddPlayer(w http.ResponseWriter, r *http.Request) {
 		"password": string(passwordEncrypted),
 	}
 
-	conect, client := database.Connect(r.Context())
-	defer client.Disconnect(context.Background())
+	playerCollection, client := database.Connect(r.Context())
+	defer client.Disconnect(r.Context())
 
 	// Verifica se já existe algum jogador com o mesmo username
 	existingPlayerDoc := bson.M{"username": player.Username}
-	err = conect.FindOne(context.Background(), existingPlayerDoc).Decode(&existingPlayer)
-	if err == nil {
+  if err = playerCollection.FindOne(r.Context(), existingPlayerDoc).Decode(&existingPlayer); err == nil {
 		Log("Um usuário tentou se cadastrar com um username já existente", r)
 		http.Error(w, "REQUEST ERROR", http.StatusBadRequest)
 		return
 	}
 
-	result, err := conect.InsertOne(context.Background(), playerDoc)
+	result, err := playerCollection.InsertOne(r.Context(), playerDoc)
 	if err != nil || result == nil {
 		http.Error(w, errorMessage, http.StatusInternalServerError)
 		return

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
@@ -12,20 +11,20 @@ import (
 )
 
 func GetAllPlayers(w http.ResponseWriter, r *http.Request) {
-	conect, client := database.Connect(r.Context())
+	playerCollection, client := database.Connect(r.Context())
 
 	filter := bson.M{}
 
-	cur, err := conect.Find(context.Background(), filter)
+	cur, err := playerCollection.Find(r.Context(), filter)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer cur.Close(context.Background())
+	defer cur.Close(r.Context())
 
 	var players []player.Public
 
-	for cur.Next(context.Background()) {
+	for cur.Next(r.Context()) {
 		var player player.Public
 		err := cur.Decode(&player)
 		logERROR(err)
@@ -38,7 +37,7 @@ func GetAllPlayers(w http.ResponseWriter, r *http.Request) {
 		players = append(players, player)
 	}
 
-	err = client.Disconnect(context.Background())
+	err = client.Disconnect(r.Context())
 	logERROR(err)
 	Log("Acesso ao banco de dados de players", r)
 	w.Header().Set("Content-Type", "application/json")
